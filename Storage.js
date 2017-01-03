@@ -131,6 +131,15 @@ var dal = {
         });
     },
 
+    updateDrones: function (id, update) {
+        this.connect(null, function (db) {
+            db.collection('drones').update(
+                {_id : id},
+                { $set : update}
+            );
+        })
+    },
+
 
     // 02 Buildings //
     insertBuilding: function (building, callback) {
@@ -186,7 +195,9 @@ var dal = {
             });
         });
     }
-}
+};
+
+
 
 module.exports = dal;
 
