@@ -5,6 +5,16 @@
 /**
  * Created by yannickvanoekelen on 13/11/16.
  */
+    // In this project we are using 8 resources
+    // 1 --> DRONES
+    // 2 --> BUILDINGS
+    // 3 --> SENSORS
+    // 4 --> LOCATIONS
+    // 5 --> EVENTS
+    // 6 --> PEOPLE
+    // 7 --> COURSES
+    // 8 --> MEASUREMENTS
+
 
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://localhost:27017/prober';
@@ -117,26 +127,35 @@ var dal = {
         });
     },
 
-    // 08 MEASUREMENTS
-    measurements : {},
 
-    // Create a list of all existing measurements
-    listMeasurements : function() {
-        var allMeasurements = [];  //Create an empty array to put all measurements in
-        for (var item in this.measurements) {
-            allMeasurements.push(this.measurements[item]); //Each item that is found, we are adding it to the array
-        };
-        return allMeasurements; //Output the filled array
+    // 02 Buildings //
+    insertBuilding: function (building, callback) {
+        this.connect(null, function (db) {
+            db.collection('buildings').insert(building, function (err, result) {
+                console.log('Building Inserted');
+                db.close();
+            });
+        });
+    },
+    getBuildings: function (buildingsCallback) {
+        this.connect(null, function (db) {
+            db.collection('buildings').find({}).toArray(function (err, doc) {
+                buildings = doc;
+                db.close();
+                buildingsCallback(buildings);
+            });
+        });
+    },
+    getBuildingByName: function (buildingCallback, name) {
+        this.connect(null, function (db) {
+            db.collection('buildings').find({name: name}).toArray(function (err, doc) {
+                building = doc;
+                db.close();
+                buildingCallback(building);
+            });
+        });
     },
 
-    // Search and return for a specific measurement (id specifies the measurement we are looking for)
-    searchMeasurements : function(id) {
-        return this.measurements[id];
-    },
 
-    // Add a (new) measurement
-    addMeasurement : function (measurement) {
-        this.measurements[measurement.id] = measurement;
-    },
 
 };
