@@ -88,32 +88,34 @@ var dal = {
         });
     },
 
-
-   module.exports = {
-
-
-    // 01 DRONES
-    drones : {},
-
-    // Create a list of all existing drones
-    listDrones : function() {
-        var allDrones = [];  //Create an empty array to put all drones in
-        for (var item in this.drones) {
-            allDrones.push(this.drones[item]); //Each item that is found, we are adding it to the array
-        };
-        return allDrones; //Output the filled array
+    // 01 Drones //
+    getDrones: function (dronesCallback) {
+        this.connect(null, function (db) {
+            db.collection('drones').find({}).toArray(function (err, doc) {
+                drones = doc;
+                db.close();
+                dronesCallback(drones);
+            });
+        });
     },
-
-    // Search and return for a specific drone (id specifies the drone we are looking for)
-    searchDrones : function(id) {
-        return this.drones[id];
+    getDroneByID: function (droneCallback, id) {
+        this.connect(null, function (db) {
+            db.collection('drones').find({_id: id}).toArray(function (err, doc) {
+                drone = doc;
+                db.close();
+                droneCallback(drone);
+            });
+        });
     },
-
-    // Add a (new) drone
-    addDrone : function (drone) {
-        this.drones[drone.id] = drone;
+    getDroneByMac: function (droneCallback, mac) {
+        this.connect(null, function (db) {
+            db.collection('drones').find({mac: mac}).toArray(function (err, doc) {
+                drone = doc;
+                db.close();
+                droneCallback(drone);
+            });
+        });
     },
-
 
     // 08 MEASUREMENTS
     measurements : {},
