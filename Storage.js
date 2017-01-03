@@ -6,21 +6,90 @@
  * Created by yannickvanoekelen on 13/11/16.
  */
 
-//Add the moment there are only 2 storages declared, I have a good idea about what I'm going to do with my data
-//But I'm thinking what storages I really need to use, so work in progress this area
+var MongoClient = require('mongodb').MongoClient;
+var url = 'mongodb://localhost:27017/prober';
 
-module.exports = {
+var dal = {
+    db : null,
 
-    // In this project we are using 8 resources
-    // 1 --> DRONES
-    // 2 --> BUILDINGS
-    // 3 --> SENSORS
-    // 4 --> LOCATIONS
-    // 5 --> EVENTS
-    // 6 --> PEOPLE
-    // 7 --> COURSES
-    // 8 --> MEASUREMENTS
+//Hieronder komen stukken terug uit ex-8 met enkele toevoegingen.
+    connect: function (err, result) {
+        MongoClient.connect(url, function (error, db) {
+            if (error)
+                throw new Error(error);
+            this.db = db;
+            result(db)
+        });
+    },
 
+    clearDrone: function (call) {
+        this.connect(null, function (db) {
+            db.collection('drones').drop(function (err, result) {
+                console.log("collection drones dropped");
+                db.close();
+            });
+        })
+    },
+
+
+    insertDrone: function (drone, callback) {
+        this.connect(null, function (db) {
+            db.collection('drones').insert(drone, function (err, result) {
+                console.log('- Drone Inserted');
+                db.close();
+            });
+        });
+    },
+
+    clearContent: function (call) {
+        this.connect(null, function (db) {
+            db.collection('contents').drop(function (err, result) {
+                db.close();
+            });
+        })
+    },
+    insertContent: function (content, callback) {
+        this.connect(null, function (db) {
+            db.collection('contents').insert(content, function (err, result) {
+                db.close();
+            });
+        });
+    },
+
+    clearFile: function (call) {
+        this.connect(null, function (db) {
+            db.collection('files').drop(function (err, result) {
+                db.close();
+            });
+        })
+    },
+
+    insertFile: function (file, callback) {
+        this.connect(null, function (db) {
+            db.collection('files').insert(file, function (err, result) {
+                db.close();
+            });
+        });
+    },
+
+    clearFileHeaders: function (call) {
+        this.connect(null, function (db) {
+            db.collection('filesheaders').drop(function (err, result) {
+                db.close();
+            });
+        })
+    },
+
+    insertFileHeader: function (fileheader, callback) {
+        this.connect(null, function (db) {
+            db.collection('filesheaders').insert(fileheader, function (err, result) {
+                db.close();
+            });
+        });
+    },
+
+
+   module.exports = {
 
 
     // 01 DRONES
