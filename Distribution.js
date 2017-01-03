@@ -25,6 +25,37 @@ String.prototype.ucfirst = function() {
 
 // 01 Drones //
 //work in progress
+var newDrone = function (id, name, mac, location, created, updated) {
+    this.id = id;
+    this.name = name;
+    this.mac = mac;
+    this.location = location;
+    this.created = created;
+    this.updated = updated;
+};
+
+app.get("/drones", function (request, response) {
+    dal.getDrones(function (drones) {
+        response.send(drones);
+    })
+});
+
+app.get("/drones/:id", function (request, response) {
+    dal.getDroneByID(function (drone){
+        response.send(drone);
+    }, request.params.id.toString());
+});
+
+app.post("/drones", function (request, response) {
+    var drone = request.body;
+    var now = new Date();
+    var postDateTime = now.toISOString();
+
+    var errors = val.fieldsNotEmpty(drone,"id", "name", "mac_address", "location");
+    if (errors){
+        response.status(400).send({msg:"Let goed op volgende veld(en) is leeg"+errors.concat()});
+        return;
+    };
 
 // 02 Buildings //
 
@@ -48,12 +79,5 @@ app.get("/drones/:id/sensors", function (request, response) {
     }, request.params.id.toString());
 });
 
-
-
-
-
-
-
-
 app.listen(4567);
-console.log("Yay, the server is running!");
+console.log("yay, de server is online");
