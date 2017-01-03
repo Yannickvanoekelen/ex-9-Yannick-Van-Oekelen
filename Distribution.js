@@ -51,11 +51,19 @@ app.post("/drones", function (request, response) {
     var now = new Date();
     var postDateTime = now.toISOString();
 
-    var errors = val.fieldsNotEmpty(drone,"id", "name", "mac_address", "location");
-    if (errors){
-        response.status(400).send({msg:"Let goed op volgende veld(en) is leeg"+errors.concat()});
-        return;
-    };
+var errors = val.fieldsNotEmpty(drone,"id", "name", "mac_address", "location");
+if (errors){
+response.status(400).send({msg:"Let goed op volgende veld(en) is leeg"+errors.concat()});
+return;
+};
+
+//getracht nog een extra validatie te eerst op de drone id
+    //helaas niet gelukt
+//getracht nog een extra validatie te doen op mac adress
+    //Helaas niet gelukt
+//wanneer u graag de aanzet wilt hiervan kan ik u deze gerust sturen
+
+
 
 // 02 Buildings //
 
