@@ -35,7 +35,7 @@ var dal = {
     clearDrone: function (call) {
         this.connect(null, function (db) {
             db.collection('drones').drop(function (err, result) {
-                console.log("collection drones dropped");
+                console.log("Drone is gedropt");
                 db.close();
             });
         })
@@ -45,7 +45,7 @@ var dal = {
     insertDrone: function (drone, callback) {
         this.connect(null, function (db) {
             db.collection('drones').insert(drone, function (err, result) {
-                console.log('- Drone Inserted');
+                console.log('Drone toegevoegd');
                 db.close();
             });
         });
@@ -54,6 +54,7 @@ var dal = {
     clearContent: function (call) {
         this.connect(null, function (db) {
             db.collection('contents').drop(function (err, result) {
+                console.log('content is verwijderd');
                 db.close();
             });
         })
@@ -61,6 +62,7 @@ var dal = {
     insertContent: function (content, callback) {
         this.connect(null, function (db) {
             db.collection('contents').insert(content, function (err, result) {
+                console.log('Content is toegevoegd');
                 db.close();
             });
         });
@@ -69,6 +71,7 @@ var dal = {
     clearFile: function (call) {
         this.connect(null, function (db) {
             db.collection('files').drop(function (err, result) {
+                console.log('file(s) verwijderd');
                 db.close();
             });
         })
@@ -77,6 +80,7 @@ var dal = {
     insertFile: function (file, callback) {
         this.connect(null, function (db) {
             db.collection('files').insert(file, function (err, result) {
+                console.log('file(s) toegevoegd');
                 db.close();
             });
         });
@@ -132,8 +136,7 @@ var dal = {
     insertBuilding: function (building, callback) {
         this.connect(null, function (db) {
             db.collection('buildings').insert(building, function (err, result) {
-                console.log('Building Inserted');
-                db.close();
+               db.close();
             });
         });
     },
