@@ -30,7 +30,7 @@ var newDrone = function (id, name, mac, location, created, updated) {
     this.name = name;
     //this.mac = mac; validatie is niet gelukt op macadres
     this.location = location;
-  
+
 };
 
 app.get("/drones", function (request, response) {
