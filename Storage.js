@@ -155,7 +155,35 @@ var dal = {
             });
         });
     },
+    // 03 Sensors //
+    getSensors: function (sensorsCallback) {
+        this.connect(null, function (db) {
+            db.collection('sensors').find({}).toArray(function (err, doc) {
+                sensors = doc;
+                db.close();
+                sensorsCallback(sensors);
+            });
+        });
+    },
+    getSensorsByDroneID: function (droneSensorsCallback, id) {
+        this.connect(null, function (db) {
+            db.collection('sensors').find({droneid: id}).toArray(function (err, doc) {
+                sensors = doc;
+                db.close();
+                droneSensorsCallback(sensors);
+            });
+        });
+    },
+    getSensorByID: function (sensorCallback, id) {
+        this.connect(null, function (db) {
+            db.collection('sensors').find({_id: id}).toArray(function (err, doc) {
+                sensor = doc;
+                db.close();
+                sensorCallback(sensor);
+            });
+        });
+    }
+}
 
+module.exports = dal;
 
-
-};
