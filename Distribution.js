@@ -28,10 +28,9 @@ String.prototype.ucfirst = function() {
 var newDrone = function (id, name, mac, location, created, updated) {
     this.id = id;
     this.name = name;
-    this.mac = mac;
+    //this.mac = mac; validatie is niet gelukt op macadres
     this.location = location;
-    this.created = created;
-    this.updated = updated;
+  
 };
 
 app.get("/drones", function (request, response) {
@@ -56,6 +55,17 @@ if (errors){
 response.status(400).send({msg:"Let goed op volgende veld(en) is leeg"+errors.concat()});
 return;
 };
+    app.put("/drones/:id", function (request, response) {
+        var now = new Date();
+        var putDateTime = now.toISOString();
+        var dronesUpdate = request.body;
+        dronesUpdate.updated = putDateTime;
+        console.log(dronesUpdate);
+
+
+        dal.updateDrones(request.params.id.toString(), buildingUpdate);
+        response.send({msg:"drone met het ID is geüpdatet"+request.params.id.toString()+"", link:"../drones/"+request.params.id.toString()});
+    });
 
 //getracht nog een extra validatie te eerst op de drone id
     //helaas niet gelukt
@@ -66,6 +76,50 @@ return;
 
 
 // 02 Buildings //
+    var newBuilding = function (id, name, city, longitude, latitude) {
+        this._id = id;
+        this.name = name;
+        this.city = city;
+        this.longitude = longitude;
+        this.latitude = latitude;
+
+    };
+
+
+    app.get("/buildings", function (request, response) {
+        dal.getBuildings(function (buildings) {
+            response.send(buildings);
+        })
+    });
+
+
+    app.post("/buildings", function (request, response) {
+        var building = request.body;
+        var now = new Date();
+        var postDateTime = now.toISOString();
+
+        var errors = val.fieldsNotEmpty(building, "name", "city");
+        if (errors){
+            response.status(400).send({msg:"Let goed op volgende veld(en) is leeg"+errors.concat()});
+            return;
+        };
+
+
+        dal.getBuildingByName(function(returnNAMEbuilding){
+            console.log('ID: '+returnNAMEbuilding.length);
+
+            if (returnNAMEbuilding.length == 0) {
+                var buildingID = shortid.generate();
+                var name = building.name.ucfirst();
+                var city = building.city.ucfirst();
+                dal.insertBuilding(new newBuilding(buildingID, name, city, building.longitude, building.latitude, postDateTime, postDateTime));
+                response.send({msg:"Het gebouw met volgende naam en ID is toegevoegd "+building.name+""+buildingID+"", link:"../buildings/"+buildingID});
+            } else {
+                response.status(409).send({msg:"Dit gebouw is reeds geregistreerd: '"+building.name+ "", link:"../buildings/"+returnNAMEbuilding[0]._id});
+            }
+        }, building.name);
+    });
+
 
 
 // 03 Sensors //

@@ -160,14 +160,16 @@ var dal = {
             });
         });
     },
+
+
     getBuildingByName: function (buildingCallback, name) {
-        this.connect(null, function (db) {
-            db.collection('buildings').find({name: name}).toArray(function (err, doc) {
-                building = doc;
-                db.close();
-                buildingCallback(building);
-            });
-        });
+    this.connect(null, function (db) {
+    db.collection('buildings').find({name: name}).toArray(function (err, doc) {
+    building = doc;
+    db.close();
+    buildingCallback(building);
+    });
+    });
     },
     // 03 Sensors //
     getSensors: function (sensorsCallback) {
