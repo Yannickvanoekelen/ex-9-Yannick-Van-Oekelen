@@ -121,15 +121,17 @@ var dal = {
             });
         });
     },
-    getDroneByMac: function (droneCallback, mac) {
-        this.connect(null, function (db) {
-            db.collection('drones').find({mac: mac}).toArray(function (err, doc) {
-                drone = doc;
-                db.close();
-                droneCallback(drone);
-            });
-        });
-    },
+
+    //momenteel als comment staan omdat ik dit nodig had voor mijn validatie op basis van mac adres maar is helaas niet gelukt
+    //*getDroneByMac: function (droneCallback, mac) {
+    //    this.connect(null, function (db) {
+    //        db.collection('drones').find({mac: mac}).toArray(function (err, doc) {
+    //            drone = doc;
+    //            db.close();
+    //            droneCallback(drone);
+    //        });
+    //    });
+    //},
 
     updateDrones: function (id, update) {
         this.connect(null, function (db) {
