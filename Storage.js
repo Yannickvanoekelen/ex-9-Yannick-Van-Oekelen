@@ -1,92 +1,71 @@
 /**
  * Created by yannickvanoekelen on 3/01/17.
  */
+
 /**
  * Created by yannickvanoekelen on 13/11/16.
  */
-// Following extensions/dependancies need to be installed via "npm install {extension} --save" in terminal
-// Express - webservice (default on webstorm application)
-// Parser - parse body from HTTP requests
-// (The information above comes from LSteffens github)
-/// Shortid - unique ID generator -->  check package.json under 'dependancies'
+
+//Add the moment there are only 2 storages declared, I have a good idea about what I'm going to do with my data
+//But I'm thinking what storages I really need to use, so work in progress this area
+
+module.exports = {
+
+    // In this project we are using 8 resources
+    // 1 --> DRONES
+    // 2 --> BUILDINGS
+    // 3 --> SENSORS
+    // 4 --> LOCATIONS
+    // 5 --> EVENTS
+    // 6 --> PEOPLE
+    // 7 --> COURSES
+    // 8 --> MEASUREMENTS
 
 
-// Load the necessary extensions
-var express = require('express');
-var parser = require('body-parser');
-var shortid = require('shortid');
 
-// Load datastore
-var store = require("./storage.js");
+    // 01 DRONES
+    drones : {},
 
-// Load validator, thinking about how I'm going to fix that :(
+    // Create a list of all existing drones
+    listDrones : function() {
+        var allDrones = [];  //Create an empty array to put all drones in
+        for (var item in this.drones) {
+            allDrones.push(this.drones[item]); //Each item that is found, we are adding it to the array
+        };
+        return allDrones; //Output the filled array
+    },
 
-// Create webservice
-var app = express();
-app.use(parser.json());
+    // Search and return for a specific drone (id specifies the drone we are looking for)
+    searchDrones : function(id) {
+        return this.drones[id];
+    },
+
+    // Add a (new) drone
+    addDrone : function (drone) {
+        this.drones[drone.id] = drone;
+    },
 
 
-//                                              DRONES                                                                //
-//  01 Drones
-// GET requests on /drones
-app.get("/drones", function (request, response) {
-    response.send(store.listDrones());
-});
+    // 08 MEASUREMENTS
+    measurements : {},
 
-// GET requests on /drones with specific ID => /drones/:id
-app.get("/drones/:id", function (request, response) {
-    var drone = store.searchDrones(request.params.id);
-    if (drone) {
-        response.send(drone); // If a drone is found, return this drone information
-    } else {
-        response.status(404).send(); // If no drone is found, return code 404 'page not found'
-    }
-});
+    // Create a list of all existing measurements
+    listMeasurements : function() {
+        var allMeasurements = [];  //Create an empty array to put all measurements in
+        for (var item in this.measurements) {
+            allMeasurements.push(this.measurements[item]); //Each item that is found, we are adding it to the array
+        };
+        return allMeasurements; //Output the filled array
+    },
 
-// POST requests on /drones
-app.post("/drones", function (request, response) {
-    var drone = request.body; // Take in the JSON request body from the POST request
+    // Search and return for a specific measurement (id specifies the measurement we are looking for)
+    searchMeasurements : function(id) {
+        return this.measurements[id];
+    },
 
-    // ID is chosen by the server, it generates a unique ID
-    var uniqueID = shortid.generate(); //This line generates the unique ID
-    drone.id = uniqueID;
+    // Add a (new) measurement
+    addMeasurement : function (measurement) {
+        this.measurements[measurement.id] = measurement;
+    },
 
-    // Add the measurement to the store
-    store.addDrone();
-    response.status(201).location("../drones/"+drone.id).send(); //Respond with the 201 status 'Created' and give back the URL of the created drone.
-});
-
-//                                            MEASUREMENTS                                                            //
-// 08 MEASUREMENTS
-// GET requests on /measurements
-app.get("/measurements", function (request, response) {
-    response.send(store.listMeasurements());
-});
-
-// GET requests on /measurements with ID => /measurements/:id
-app.get("/measurements/:id", function (request, response) {
-    var measurement = store.searchMeasurements(request.params.id);
-    if (measurement) {
-        response.send(measurement); // If a measurement is found, return this measurement
-    } else {
-        response.status(404).send(); // If no measurement is found, return code 404 'page not found'
-    }
-});
-
-// POST request on /measurements
-app.post("/measurements", function (request, response) {
-    var measurement = request.body;
-
-    // ID is chosen by the server, it is a combination of the droneID and a unique generated ID
-    var uniqueID = shortid.generate(); //This line generates the unique ID
-    measurement.id = measurement.drone.id + uniqueID;
-
-    // add the measurement to the store
-    store.addMeasurement();
-    response.status(201).location("../measurements/"+measurement.id).send(); //Respond with the 201 status 'Created' and give the URL of the created measurement.
-});
-
-// Start the webservice on port 3000
-app.listen(3000);
-console.log("The service is now running at http://127.0.0.1:3000");
-
+};
