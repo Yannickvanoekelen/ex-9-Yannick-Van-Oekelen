@@ -124,20 +124,30 @@ var dal = {
 
     // 01 Drones //
     getDrones: function (dronesCallback) {
+        //we maken hier een variabele getDrones aan waar we een functie in gaan plaatsen met een parameter dronesCallback
         this.connect(null, function (db) {
+            //we gaan hier verbinden naar onze db
             db.collection('drones').find({}).toArray(function (err, doc) {
+                //we gaan hier kijken in onze collectie drones welke drones er allemaal zijn en in een array plaatsen
                 drones = doc;
                 db.close();
+                //we sluiten onze connectie naar de db
                 dronesCallback(drones);
+                //we voeren de functie dronesCallback uit
             });
         });
     },
     getDroneByID: function (droneCallback, id) {
+        //we maken hier een varaibele getDroneByID aan waar we een functie in gaan plaatsen met als paramters droneCallback en id
         this.connect(null, function (db) {
+            //we gaan hier verbinden naar onze db
             db.collection('drones').find({_id: id}).toArray(function (err, doc) {
+                //we gaan hier een drone zoeken op een bepaald id in onze collectie en deze in een array plaatsen
                 drone = doc;
                 db.close();
+                //we gaan hier de connectie naar onze db sluiten
                 droneCallback(drone);
+                //we voeren hier de functie droneCallback uit
             });
         });
     },
@@ -154,10 +164,14 @@ var dal = {
     //},
 
     updateDrones: function (id, update) {
+        //we maken hier een nieuwe variabele aan updateDrones waar we een functie in plaatsen
         this.connect(null, function (db) {
+            //we gaan connecteren naar onze databank
             db.collection('drones').update(
+                //we gaan update uitvoeren op onze collectie drones
                 {_id : id},
                 { $set : update}
+                //id w meegegeven alsook onze set
             );
         })
     },
@@ -165,32 +179,48 @@ var dal = {
 
     // 02 Buildings //
     insertBuilding: function (building, callback) {
+        //we maken hier een variabele aan insertBuilding waar we een functie in gaan plaatsen met de parameters building en callback
         this.connect(null, function (db) {
+            //we gaan een connecteren naar onze databank
             db.collection('buildings').insert(building, function (err, result) {
+                //we gaan gebouw(en) toevoegen in onze collectie
                db.close();
+                //we sluiten de connectie naar onze db
             });
         });
     },
     getBuildings: function (buildingsCallback) {
+        //we maken een variabele aan getBuildings waar we een functie in gaan plaatsen met als parameter buildingscallback
         this.connect(null, function (db) {
+            //we gaan hier connecteren naar onze db
             db.collection('buildings').find({}).toArray(function (err, doc) {
+                //we gaan hier kijken welke buildings er zijn in onze collectie en deze in een array plaatsen
                 buildings = doc;
                 db.close();
+                //we sluiten de connectie naar onze db
                 buildingsCallback(buildings);
+                //we voeren onze functie buildingscallback uit
             });
         });
     },
 
 
     getBuildingByName: function (buildingCallback, name) {
+        //we gaan hier een variabele getBuildingByName aanmaken waar we een functie in gaan plaatsen met als parameter buildingsCallback en name
     this.connect(null, function (db) {
+        //we gaan hier connecteren naar onze db
     db.collection('buildings').find({name: name}).toArray(function (err, doc) {
+        //we gaan hier kijken welk(e) gebouw(en) er zijn (op naam) en vervolgens aan onze array toevoegen
     building = doc;
     db.close();
+        //we sluiten de connectie naar onse db
     buildingCallback(building);
+        //we voeren de functie buildingCallback uit
     });
     });
     },
+
+//sensor krijgt heeft dezelfde werking als de twee andere storages hierboven voor werking gelieve te kijken bij de twee bovenstaande
     // 03 Sensors //
     getSensors: function (sensorsCallback) {
         this.connect(null, function (db) {

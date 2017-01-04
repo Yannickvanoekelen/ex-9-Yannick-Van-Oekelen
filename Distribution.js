@@ -4,20 +4,20 @@
 /**
  * Created by yannickvanoekelen on 13/11/16.
  */
-
+//we gaan hier onze afhankelijkheden gaan inladen
 var express = require('express');
 var parser = require('body-parser');
 var shortid = require('shortid');
 
-
+//we gaan  hier onze exterene bronnen gaan inladen
 var dal = require("./Storage");
 var val = require("./Validation");
 
-
+//we gaan hier een webservice gaan aanmaken
 var app = express();
 app.use(parser.json());
 
-
+//
 String.prototype.ucfirst = function() {
     return this.charAt(0).toUpperCase() + this.substr(1);
 };
