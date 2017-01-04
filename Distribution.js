@@ -10,8 +10,8 @@ var parser = require('body-parser');
 var shortid = require('shortid');
 
 
-var dal = require("./storage");
-var val = require("./validate");
+var dal = require("./Storage");
+var val = require("./Validation");
 
 
 var app = express();
