@@ -1,9 +1,9 @@
 /**
  * Created by yannickvanoekelen on 3/01/17.
  */
-/**
- * Created by yannickvanoekelen on 13/11/16.
- */
+
+//hulp gekregen van kristof en daar ben ik enorm dankbaar//
+
 //we gaan hier onze afhankelijkheden gaan inladen
 var express = require('express');
 var parser = require('body-parser');
@@ -25,7 +25,6 @@ String.prototype.ucfirst = function() {
 
 
 // 01 Drones //
-//work in progress
 var newDrone = function (id, name, mac, location, created, updated) {
     this.id = id;
     this.name = name;
@@ -59,31 +58,44 @@ app.get("/drones/:id", function (request, response) {
 });
 
 app.post("/drones", function (request, response) {
+    //hierbij gaan we een post post request doen naar het pad (/drones) dat we hebbeen opgegeven met een gespecifieerde functie
     var drone = request.body;
+    //we gaan hier in onze request body in onze variabele drone zetten
     var now = new Date();
+    //in onze variabele now plaatsen we de datum
     var postDateTime = now.toISOString();
+    //We gaan hierbij onze nieuwe datum naar een ISOstring (want date staat in rtf formaat) gaan aanpassen en in de variabele postDateTime gaan plaatsen
 
 
-var errors = val.fieldsNotEmpty(drone,"id", "name", "mac_address", "location");
-//we gaan hier een validatie uitvoeren of er een bepaald verplicht veld leeg is
-if (errors){
-response.status(400).send({msg:"Let goed op volgende veld(en) is leeg"+errors.concat()});
-//wanneer een bepaald veld leeg is gaan we een foutboodschap geven dat dit veld eigenlijk niet leeg mag zijn
-return;
-};
+    var errors = val.fieldsNotEmpty(drone,"id", "name", "mac_address", "location");
+    //we gaan hier een validatie uitvoeren of er een bepaald verplicht veld leeg is
+    if (errors){
+    response.status(400).send({msg:"Let goed op volgende veld(en) is leeg"+errors.concat()});
+    //wanneer een bepaald veld leeg is gaan we een foutboodschap geven dat dit veld eigenlijk niet leeg mag zijn
+    return;
+    }
 
-//insert the drone in the database and send response
     dal.insertDrone(new newDrone(drone.id, drone.name, drone.mac_address, drone.location, postDateTime, postDateTime));
-    response.send("Drone with id "+drone.id+" inserted.");
+    //we gaan een dalmodule gaan oproepen en meerbepaald de insertDrone en vervolgens gaan we een nieuwe drone gaan toevoegen
+    response.send("We hebben een drone met volgende id toegevoegd"+drone.id+"" );
+    //we gaan een response geven met het feit dat we net een drone met dat id hebben toegevoegd
+});
 
-app.put("/drones/:id", function (request, response) {
+    app.put("/drones/:id", function (request, response) {
+  //we gaan een put doen doen naar /drones/:id om tot de een drone met een welbepaalde id te komen met een bepaalde functie
   var now = new Date();
+  //in onze variabele now plaatsen we de datum
   var putDateTime = now.toISOString();
+  //We gaan hierbij onze nieuwe datum naar een ISOstring (want date staat in rtf formaat) gaan aanpassen en in de variabele postDateTime gaan plaatsen
   var dronesUpdate = request.body;
+  //we gaan hier in onze request body in onze variabele drone zetten
   dronesUpdate.updated = putDateTime;
   console.log(dronesUpdate);
+  //we gaan een console.log doen met daarin de variabele dronesUpdate
   dal.updateDrones(request.params.id.toString(), dronesUpdate);
+  // we gaan een dalmodule oproepen meerbepaald de updateDrones waar we verschillende parameters aan gaan meegeven
   response.send({msg:"drone met het ID is geüpdatet"+request.params.id.toString()+"", link:"../drones/"+request.params.id.toString()});
+    //Vervolgens gaan we een response sturen met daarin wat er net heeft plaatsgevonden
     });
 
 //getracht nog een extra validatie te eerst op de drone id
@@ -121,9 +133,13 @@ app.put("/drones/:id", function (request, response) {
 
 
     app.post("/buildings", function (request, response) {
+            //hierbij gaan we een post post request doen naar het pad (/buildings) dat we hebbeen opgegeven met een gespecifieerde functie
         var building = request.body;
+            //we gaan hier onze request body in onze variabele building zetten
         var now = new Date();
+            //in onze variabele now plaatsen we een de datum
         var postDateTime = now.toISOString();
+            //We gaan hierbij onze nieuwe datum naar een ISOstring (want date staat in rtf formaat) gaan aanpassen en in de variabele postDateTime gaan plaatsen
 
 
 
@@ -138,7 +154,7 @@ app.put("/drones/:id", function (request, response) {
 
  dal.getBuildingByName(function(returnNAMEbuilding){
      //we gaan hier een dalfunctie die we reeds hebben gedeclareerd gaan oproepen
- }
+
  console.log('ID: '+returnNAMEbuilding.length);
         //we gaan hier een console log uitvoeren met de ID & de lengte van returnNameBuilding
 
@@ -151,7 +167,7 @@ app.put("/drones/:id", function (request, response) {
       var city = building.city.ucfirst();
         //we gaan er voor zorgen dat de stad in de variabele stad komt en dit met de eerste letter een hoofdletter
       dal.insertBuilding(new newBuilding(buildingID, name, city, building.longitude, building.latitude, postDateTime, postDateTime));
-        //we gaan hier een dalfuntie oproepen waarbij we een nieuw gebouw gaan toevoegen
+        //we gaan hier een dalmodule specifieker insertBuilding oproepen waarbij we een nieuw gebouw gaan toevoegen
       response.send({msg:"Het gebouw met volgende naam en ID is toegevoegd "+building.name+""+buildingID+"", link:"../buildings/"+buildingID});
        } else {
            //wanneer de lengte van returnNameBuilding niet gelijk is gaan nul gaat er het volgende (onderstaande) uitgevoerd worden

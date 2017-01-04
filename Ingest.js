@@ -1,6 +1,7 @@
 /**
  * Created by yannickvanoekelen on 3/01/17.
  */
+//hulp gekregen van kristof en daar ben ik enorm dankbaar//
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 //moet er in om het probleem met de certificaten op te lossen
 
