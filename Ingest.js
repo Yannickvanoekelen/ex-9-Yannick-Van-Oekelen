@@ -1,18 +1,19 @@
 /**
- * Created by yannickvanoekelen on 4/01/17.
+ * Created by yannickvanoekelen on 3/01/17.
  */
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-//verhelpt het probleem met de certificaten
+//moet er in om het probleem met de certificaten op te lossen
 
 var BASE_URL = "https://web-ims.thomasmore.be/datadistribution/API/2.0";
-//url voor naar api's te gaan
+//url voor naar de api's te gaan
 var Settings = function(url) {
     this.url = BASE_URL + url;
-//this is een verwijzing naar settings.url
+//this is hier een verwijzing naar het object.url
     this.method = "GET";
     this.qs = {format: "json"};
 //welk formaat je verwacht te krijgen (quick sync)
     this.headers = { authorization: "Basic aW1zOno1MTJtVDRKeVgwUExXZw=="};
+//verwijst naar uw http headers, wij geven hier onze authorisatie aan mee
 };
 
 var Drone = function(id, name, macA, loc, lastpada, files, filesCount) {
@@ -24,9 +25,8 @@ var Drone = function(id, name, macA, loc, lastpada, files, filesCount) {
     this.files = files;
     this.files_count = filesCount;
 };
-//hier gaan we de variabele drone aanmaken die eigenlijk een beschrijving geeft hoe een drone er moet uitzien (blueprint)
-//this.id (etc) zijn diegenen van mongodb
-
+//we gaan hier een een variabele drone aanmaken die eigenlijk gaat beschrijven hoe een drone er moet uitzien
+//this.id etc = mongodb
 
 var Content = function(id, macA, url, datetime, ref, rssi) {
     this.id = id;
@@ -48,31 +48,29 @@ var File = function(fid, dateFirstRecord, dateLastRecord, dateLoaded, cont, cont
     this.ref = ref;
 };
 
-// hulp gekregen van henzo bij deze install request van save
 
-var dronesSettings = new Settings("/drones?format=json");
-//Eerste aanpassing aan url omdat uw basis url geen data gaat opleveren, hiermee gaan we naar drones gaan (dieper)
 var request = require("request");
 var dal = require("./Storage.js");
-//je gaat de file Storage.js inladen
+//hier laden we /Storage.js in
 dal.clearDrone();
 dal.clearFile();
 dal.clearContent();
-//hier worden functies opgeroepen uit onze dal
+//er wordt een functie opgeroepen uit dal
 
-
+var dronesSettings = new Settings("/drones?format=json");
+//we maken een nieuwe variabele droneSettings aan waar we onze nieuwe settings gaan toevoegen in de hoogste rang url /drones
 request(dronesSettings, function(error, response, dronesString) {
-    //verwijst naar de variabele request op de url dronesettings
+    //verwijst naar de variabele request op de url droneSettings
     var drones = JSON.parse(dronesString);
-    //we gaan onze dronestring deftig gaan ontleden in json en in een var drones gaan steken
+    //we gaan onze droneString deftig gaan ontleden in json en in var drones gaan steken
     drones.forEach(function(drone) {
-        //elke drone gaan doorlopen, wat steek je in uw drone (alles wat teogangkelijk is in uw drones (droneSettings)
+        //elke drone gaan we doorlopen, wat steek je in uw drone (alles wat op dat moment toegangkelijk is via droneSettings)
         var droneSettings = new Settings("/drones/" + drone.id + "?format=json");
-        //extra gedeelte toevoegen aan droneSettings zodat je dieper in de drone kan gaan
+        //extra gedeelte toevoegen aan droneSettings zodat je dieper kan om de juiste gegevens te bekomen
         request(droneSettings, function(error, response, droneString) {
-            //Je gaat een nieuwe request doen omdat je url variabel gaat zijn denk aan het feit dat er meerdere drones zijn
+            //je gaat een nieuwe request doen omdat je url variabel gaat zijn, denk aan het feit dat er meerdere drone zijn
             var drone = JSON.parse(droneString);
-            //we gaan onze dronestring deftig gaan ontleden in json en in var drones gaan steken
+            //we gaan onze dronestring deftig gaan ontleden in json en in onze variabele steken
             dal.insertDrone(new Drone(
                 drone.id,
                 drone.name,
@@ -82,40 +80,51 @@ request(dronesSettings, function(error, response, dronesString) {
                 drone.files,
                 drone.files_count
             ));
-            var contentSettings = new Settings("/files/" + file.id + "/contents?format=json&embed");
-            request(contentSettings, function(error, response, contentString) {
-                var content = JSON.parse(contentString);
-                dal.insertContent(new Content(
-                    content.id,
-                    content.mac_address,
-                    content.url,
-                    content.datetime,
-                    content.ref,
-                    content.rssi
-                ));
-                var filesSettings = new Settings("/files?drone_id.is=" +
-                    drone.id + "&format=json&date_loaded.greaterOrEqual=2016-12-07T12:00:00");
-                request(filesSettings, function(error, response, filesString) {
-                    var files = JSON.parse(filesString);
-                    files.forEach(function(file) {
-                        var fileSettings = new Settings("/files/" + file.id + "?format=json");
-                        request(fileSettings, function(error, response, fileString) {
-                            var file = JSON.parse(fileString);
-                            dal.insertFile(new File(
-                                file.file_id,
-                                file.date_first_record,
-                                file.date_last_record,
-                                file.date_loaded,
-                                file.contents,
-                                file.contents_count,
-                                file.url,
-                                file.ref
-                            ));
-                        });
-                    });
-                });
-            });
-        });
-    });
-});
+//Je connecteert naar dal en haalt daar de functie insertDrone op
+//vervolgens ga je new drone uitvoeren (functie)
+//belangrijk is dat je hier direct gaat wegschrijven naar de databank
+
+//WERKING HIERONDER IS HETZELFDE VOOR UITLEG ZIE HET GEHEEL VAN EEN DRONE TOE TE VOEGEN
+            var filesHeaderSettings = new Settings("/files?drone_id.is=" + drone.id + "&format=json");
+            request(filesHeaderSettings, function (error, response, fileheadersString) {
+                var fileHeaders = JSON.parse(fileheadersString);
+                fileHeaders.forEach(function (file) {
+                    var filesSettings = new Settings("/files/"+file.id+"?format=json");
+                    request(filesSettings, function(error, response, filesString) {
+                        var files = JSON.parse(filesString);
+                        dal.insertFile(new File(
+                            file.file_id,
+                            file.date_first_record,
+                            file.date_last_record,
+                            file.date_loaded,
+                            file.contents,
+                            file.contents_count,
+                            file.url,
+                            file.ref
+                        ));
+
+                        var contentHeadersSettings = new Settings("/files/"+file.id+"/contents?format=json");
+                        request(contentHeadersSettings, function (error, response, contentheadersString) {
+                            var contentHeaders = JSON.parse(contentheadersString);
+                            contentHeaders.forEach(function(content) {
+                                var contentSettings = new Settings("/files/"+file.id+"/contents/"+content.id+"?format=json");
+                                request(contentSettings, function(error, response, contentString) {
+                                    var content = JSON.parse(contentString);
+                                    dal.insertContent(new Content(
+                                        content.id,
+                                        content.mac_address,
+                                        content.url,
+                                        content.datetime,
+                                        content.ref,
+                                        content.rssi
+                                    ));
+                                }); // betrekking op onze content request
+                            }); // betrekking op onze contentheader for each
+                        }); // betrekking op onze content list request
+                    }); // betrekking op onze files request
+                }); // betrekking op onze fileheader for each
+            }); // betrekking op onze file list request
+        }); // betrekking op onze dorne detail request
+    }); //betrekkign op onze drone for each
+}); //betrekking op onze drone list request
 console.log("Script running");
