@@ -86,22 +86,6 @@ var dal = {
         });
     },
 
-    clearFileHeaders: function (call) {
-        this.connect(null, function (db) {
-            db.collection('filesheaders').drop(function (err, result) {
-                db.close();
-            });
-        })
-    },
-
-    insertFileHeader: function (fileheader, callback) {
-        this.connect(null, function (db) {
-            db.collection('filesheaders').insert(fileheader, function (err, result) {
-                db.close();
-            });
-        });
-    },
-
     // 01 Drones //
     getDrones: function (dronesCallback) {
         this.connect(null, function (db) {
