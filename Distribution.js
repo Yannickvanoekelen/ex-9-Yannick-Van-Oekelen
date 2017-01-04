@@ -2,7 +2,7 @@
  * Created by yannickvanoekelen on 3/01/17.
  */
 
-//hulp gekregen van kristof en daar ben ik enorm dankbaar//
+//hulp gekregen van kristof en axel en daar ben ik enorm dankbaar voor//
 
 //we gaan hier onze afhankelijkheden gaan inladen
 var express = require('express');
